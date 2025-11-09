@@ -2,11 +2,17 @@
 
 All notable changes to `@devwizard/laravel-localizer-react` will be documented in this file.
 
+## v0.0.2 - 2025-11-09
+
+@beta release
+**Full Changelog**: https://github.com/DevWizardHQ/laravel-localizer-react/compare/v0.0.1...v0.0.2
+
 ## v0.0.1 - 2025-11-09
 
 ### 🎉 Initial Beta Release
 
 - **useTranslation Hook**: React hook for accessing Laravel translations
+  
   - `__()` - Main translation function with replacements and fallback
   - `trans()` - Alias for `__()`
   - `lang()` - Alias for `__()`
@@ -16,22 +22,26 @@ All notable changes to `@devwizard/laravel-localizer-react` will be documented i
   - `dir` - Text direction (ltr/rtl)
   - `availableLocales` - Available locales with metadata
   - `translations` - All translations for current locale
-
+  
 - **Vite Plugin**: Automatic TypeScript generation
+  
   - Watches `lang/**` directory for changes
   - Debounced regeneration (300ms)
   - Runs `php artisan localizer:generate --all` automatically
   - Zero configuration required
-
+  
 - **TypeScript Support**: Full type safety
+  
   - Comprehensive interfaces for all types
   - IntelliSense support in IDEs
   - Strict mode compatible
-
+  
 - **Inertia.js Integration**: Seamless integration with Inertia.js
+  
   - Works with both Inertia v1 and v2
   - Supports React 18 and 19
   - Automatic page props detection
+  
 
 ### 📚 Documentation
 
