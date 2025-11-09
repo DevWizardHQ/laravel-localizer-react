@@ -2,8 +2,8 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig({
   entry: {
-    index: 'index.ts',
-    'vite-plugin': 'vite-plugin.ts',
+    index: 'src/index.ts',
+    'vite-plugin': 'src/vite-plugin-laravel-localizer.ts',
   },
   format: ['esm'],
   dts: {

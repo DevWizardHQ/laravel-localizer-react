@@ -1,29 +1,28 @@
-import { laravelLocalizer } from '../vite-plugin';
+import { laravelLocalizer } from '../src/vite-plugin-laravel-localizer';
 
 describe('laravelLocalizer Vite Plugin', () => {
   it('should return a valid Vite plugin', () => {
     const plugin = laravelLocalizer();
 
-    expect(plugin).toHaveProperty('name', 'vite-plugin-laravel-localizer');
+    expect(plugin).toHaveProperty('name', '@devwizard/vite-plugin-laravel-localizer');
     expect(plugin).toHaveProperty('buildStart');
-    expect(plugin).toHaveProperty('configureServer');
+    expect(plugin).toHaveProperty('handleHotUpdate');
   });
 
   it('should accept custom options', () => {
     const plugin = laravelLocalizer({
       command: 'php artisan custom:command',
-      watch: ['custom/**'],
+      patterns: ['custom/**'],
       debug: true,
-      debounce: 500,
     });
 
-    expect(plugin.name).toBe('vite-plugin-laravel-localizer');
+    expect(plugin.name).toBe('@devwizard/vite-plugin-laravel-localizer');
   });
 
   it('should use default options when not provided', () => {
     const plugin = laravelLocalizer();
 
-    expect(plugin.name).toBe('vite-plugin-laravel-localizer');
+    expect(plugin.name).toBe('@devwizard/vite-plugin-laravel-localizer');
   });
 
   describe('buildStart hook', () => {
@@ -35,32 +34,10 @@ describe('laravelLocalizer Vite Plugin', () => {
   });
 
   describe('configureServer hook', () => {
-    it('should be defined', () => {
+    it('should be undefined (uses handleHotUpdate instead)', () => {
       const plugin = laravelLocalizer();
 
-      expect(typeof plugin.configureServer).toBe('function');
-    });
-
-    it('should set up file watchers', () => {
-      const plugin = laravelLocalizer();
-
-      const mockWatcher = {
-        on: jest.fn(),
-      };
-
-      const mockServer = {
-        watcher: mockWatcher,
-        ws: {
-          send: jest.fn(),
-        },
-      };
-
-      plugin.configureServer?.(mockServer as any);
-
-      // Should set up three watchers: change, add, unlink
-      expect(mockWatcher.on).toHaveBeenCalledWith('change', expect.any(Function));
-      expect(mockWatcher.on).toHaveBeenCalledWith('add', expect.any(Function));
-      expect(mockWatcher.on).toHaveBeenCalledWith('unlink', expect.any(Function));
+      expect(plugin.configureServer).toBeUndefined();
     });
   });
 
@@ -68,7 +45,7 @@ describe('laravelLocalizer Vite Plugin', () => {
     it('should accept empty options object', () => {
       const plugin = laravelLocalizer({});
 
-      expect(plugin.name).toBe('vite-plugin-laravel-localizer');
+      expect(plugin.name).toBe('@devwizard/vite-plugin-laravel-localizer');
     });
 
     it('should merge custom options with defaults', () => {
@@ -76,7 +53,7 @@ describe('laravelLocalizer Vite Plugin', () => {
         debug: true,
       });
 
-      expect(plugin.name).toBe('vite-plugin-laravel-localizer');
+      expect(plugin.name).toBe('@devwizard/vite-plugin-laravel-localizer');
     });
   });
 

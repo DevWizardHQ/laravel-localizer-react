@@ -32,6 +32,12 @@ export default tseslint.config(
     },
   },
   {
+    files: ['**/vite-plugin-*.ts'],
+    rules: {
+      '@typescript-eslint/no-this-alias': 'off',
+    },
+  },
+  {
     ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.cjs', '*.min.js', 'eslint.config.js'],
   }
 );

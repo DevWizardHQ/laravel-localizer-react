@@ -4,6 +4,6 @@ export type {
   PageProps,
   UseLocalizerReturn,
   UseLocalizerOptions,
-} from './hooks/useLocalizer';
+} from './useLocalizer';
 
-export { useLocalizer } from './hooks/useLocalizer';
+export { useLocalizer } from './useLocalizer';

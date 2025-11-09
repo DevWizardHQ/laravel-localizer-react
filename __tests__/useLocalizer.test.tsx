@@ -1,6 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import { renderHook } from '@testing-library/react';
-import { useLocalizer } from '../hooks/useLocalizer';
+import { useLocalizer } from '../src/useLocalizer';
 
 // Mock usePage
 const mockUsePage = usePage as jest.MockedFunction<typeof usePage>;
