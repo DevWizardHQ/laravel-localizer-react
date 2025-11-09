@@ -43,7 +43,7 @@ describe('laravelLocalizer Vite Plugin', () => {
 
     it('should set up file watchers', () => {
       const plugin = laravelLocalizer();
-      
+
       const mockWatcher = {
         on: jest.fn(),
       };

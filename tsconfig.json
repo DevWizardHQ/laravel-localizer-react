@@ -37,15 +37,6 @@
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "__tests__",
-    "**/*.test.ts",
-    "**/*.test.tsx"
-  ]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist", "__tests__", "**/*.test.ts", "**/*.test.tsx"]
 }

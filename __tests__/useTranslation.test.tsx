@@ -144,9 +144,7 @@ describe('useTranslation', () => {
 
       const { result } = renderHook(() => useTranslation());
 
-      expect(result.current.choice('user.items', 3, { name: 'Alice' })).toBe(
-        'Alice has 3 items'
-      );
+      expect(result.current.choice('user.items', 3, { name: 'Alice' })).toBe('Alice has 3 items');
     });
   });
 

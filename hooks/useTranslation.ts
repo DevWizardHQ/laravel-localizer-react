@@ -156,11 +156,8 @@ export function useTranslation(): UseTranslationReturn {
   const { props } = usePage<PageProps>();
   const locale = props.locale?.current || 'en';
   const dir = props.locale?.dir || 'ltr';
-  
-  const availableLocales = useMemo(
-    () => props.locale?.available || {},
-    [props.locale?.available]
-  );
+
+  const availableLocales = useMemo(() => props.locale?.available || {}, [props.locale?.available]);
 
   // Dynamically import translations from generated files
   // Note: Users need to set up path alias '@/lang' -> 'resources/js/lang'

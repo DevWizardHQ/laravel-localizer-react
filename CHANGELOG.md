@@ -34,23 +34,27 @@ All notable changes to `@devwizard/laravel-localizer-react` will be documented i
   - Automatic page props detection
 
 ### 📚 Documentation
+
 - Comprehensive README with usage examples
 - API documentation with TypeScript interfaces
 - Migration guide from v1 to v2
 
 ### 🧪 Testing
+
 - Jest configuration
 - Comprehensive test suite with 100% coverage
 - Testing Library for React components
 - ESM module support
 
 ### 🛠️ Development Tools
+
 - ESLint configuration with TypeScript and React rules
 - Prettier for code formatting
 - tsup for building and bundling
 - GitHub Actions for CI/CD
 
 ### 📦 Package Configuration
+
 - ESM-only distribution
 - Tree-shakeable exports
 - Proper package.json exports field
