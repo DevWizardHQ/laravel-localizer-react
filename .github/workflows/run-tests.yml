@@ -1,0 +1,71 @@
+name: Test & Build
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - '**.ts'
+      - '**.tsx'
+      - '**.js'
+      - '**.jsx'
+      - '.github/workflows/run-tests.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'tsup.config.ts'
+  pull_request:
+    branches: [main, develop]
+  workflow_run:
+    workflows: ['Code Quality']
+    types:
+      - completed
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [20, 22]
+
+    name: Node ${{ matrix.node-version }} - ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check, lint, test & build
+        run: npm run prepublishOnly
+
+      - name: Verify build outputs
+        run: |
+          node -e "const fs=require('fs'); console.log('dist/ contents:'); fs.readdirSync('dist').forEach(f => console.log(f)); ['dist/index.js','dist/index.d.ts'].forEach(f => {if(!fs.existsSync(f)) throw new Error(f+' not found')}); console.log('All required files exist')"
+
+      - name: Verify package imports
+        run: |
+          node -e "
+            console.log('Testing ESM import...');
+            import('./dist/index.js').then(esm => {
+              console.log('ESM exports:', Object.keys(esm));
+              console.log('Package imports working correctly!');
+            }).catch(err => {
+              console.error('ESM import failed:', err);
+              process.exit(1);
+            });
+          "

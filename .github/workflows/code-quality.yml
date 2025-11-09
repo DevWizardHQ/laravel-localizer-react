@@ -1,0 +1,55 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - '**.ts'
+      - '**.tsx'
+      - '**.js'
+      - '**.jsx'
+      - '**.json'
+      - '**.md'
+      - '.github/workflows/code-quality.yml'
+      - 'tsconfig.json'
+      - 'package.json'
+  # pull_request:
+  #   branches: [main, develop]
+
+permissions:
+  contents: write
+
+jobs:
+  quality-check:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Auto-fix formatting on push to main/develop (not on PRs)
+      - name: Format code
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        run: npx prettier --write .
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Commit formatting changes
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: 'style: fix code formatting [skip ci]'

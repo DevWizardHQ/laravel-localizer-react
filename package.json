@@ -1,0 +1,106 @@
+{
+  "name": "@devwizard/laravel-localizer-react",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "React integration for Laravel Localizer with Vite plugin, useTranslation hook, and automatic TypeScript generation",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./vite": {
+      "types": "./dist/vite-plugin.d.ts",
+      "import": "./dist/vite-plugin.js",
+      "require": "./dist/vite-plugin.js",
+      "default": "./dist/vite-plugin.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "prepublishOnly": "npm run type-check && npm run lint && npm run test && npm run build"
+  },
+  "keywords": [
+    "laravel",
+    "laravel-localizer",
+    "react",
+    "inertia",
+    "inertiajs",
+    "localization",
+    "internationalization",
+    "i18n",
+    "l10n",
+    "translations",
+    "typescript",
+    "vite",
+    "vite-plugin",
+    "spa",
+    "react-hooks",
+    "devwizard"
+  ],
+  "author": {
+    "name": "IQBAL HASAN",
+    "email": "devwizard24@gmail.com",
+    "url": "https://github.com/DevWizardHQ"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/DevWizardHQ"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevWizardHQ/laravel-localizer.git",
+    "directory": "packages/react"
+  },
+  "bugs": {
+    "url": "https://github.com/DevWizardHQ/laravel-localizer/issues"
+  },
+  "homepage": "https://github.com/DevWizardHQ/laravel-localizer#readme",
+  "peerDependencies": {
+    "@inertiajs/react": "^1.0.0 || ^2.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "vite": "^5.0.0 || ^6.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.1.12",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "eslint": "^9.34.0",
+    "eslint-plugin-react": "^7.0.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "jest": "^30.0.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "prettier": "^3.4.2",
+    "react": "^19.0.0",
+    "ts-jest": "^29.4.5",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.0"
+  }
+}
