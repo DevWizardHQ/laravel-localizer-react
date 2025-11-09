@@ -201,17 +201,22 @@ export function useLocalizer(options: UseLocalizerOptions = {}): UseLocalizerRet
       interface WindowWithTranslations extends Window {
         __LARAVEL_LOCALIZER_TRANSLATIONS__?: Record<string, Record<string, string>>;
       }
-      const translations = (window as WindowWithTranslations).__LARAVEL_LOCALIZER_TRANSLATIONS__?.[locale] || {};
+      const translations =
+        (window as WindowWithTranslations).__LARAVEL_LOCALIZER_TRANSLATIONS__?.[locale] || {};
 
       // Note: langPath is stored for future use if needed for dynamic imports
       // Currently, translations are loaded globally via window object
       if (Object.keys(translations).length === 0 && langPath !== '@/lang') {
-        console.warn(`[Laravel Localizer] Custom langPath '${langPath}' specified but translations not found. Ensure your vite.config has proper path alias.`);
+        console.warn(
+          `[Laravel Localizer] Custom langPath '${langPath}' specified but translations not found. Ensure your vite.config has proper path alias.`
+        );
       }
 
       return translations;
     } catch {
-      console.warn(`[Laravel Localizer] Could not load translations for locale: ${locale}. Default path is '${langPath}'.`);
+      console.warn(
+        `[Laravel Localizer] Could not load translations for locale: ${locale}. Default path is '${langPath}'.`
+      );
       return {};
     }
   }, [locale, langPath]);
