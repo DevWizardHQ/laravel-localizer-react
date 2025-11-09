@@ -229,6 +229,7 @@ describe('useLocalizer', () => {
         'validation.required': 'This field is required',
         'greeting.hello': 'Hello :name!',
         'items.count': 'You have :count items',
+        'user.items': ':name has :count items',
       });
     });
   });

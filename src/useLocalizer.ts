@@ -190,32 +190,32 @@ export function useLocalizer(options: UseLocalizerOptions = {}): UseLocalizerRet
 
   const availableLocales = useMemo(() => props.locale?.available || {}, [props.locale?.available]);
 
-  // Dynamically import translations from generated files
-  // Note: By default, translations are loaded from '@/lang' folder (resources/js/lang)
-  // Users can customize this path by passing langPath option
-  // The actual translations object will be available at runtime
+  // Load translations from window object (initialized in bootstrap.ts)
+  // The langPath option is used by the vite plugin to know where to watch for changes
+  // and where the generated files should be located
   const translations = useMemo<Record<string, string>>(() => {
     try {
-      // This will be resolved at build time by Vite
-      // The generated files are created by php artisan localizer:generate
-      interface WindowWithTranslations extends Window {
-        __LARAVEL_LOCALIZER_TRANSLATIONS__?: Record<string, Record<string, string>>;
+      // Translations are automatically loaded in bootstrap.ts from the generated files
+      // This provides immediate, synchronous access to all translations
+      interface WindowWithLocalizer extends Window {
+        localizer?: {
+          translations: Record<string, Record<string, string>>;
+        };
       }
-      const translations =
-        (window as WindowWithTranslations).__LARAVEL_LOCALIZER_TRANSLATIONS__?.[locale] || {};
+      const localizer = (window as WindowWithLocalizer).localizer;
 
-      // Note: langPath is stored for future use if needed for dynamic imports
-      // Currently, translations are loaded globally via window object
-      if (Object.keys(translations).length === 0 && langPath !== '@/lang') {
+      if (!localizer?.translations) {
         console.warn(
-          `[Laravel Localizer] Custom langPath '${langPath}' specified but translations not found. Ensure your vite.config has proper path alias.`
+          `[Laravel Localizer] Translations not initialized. Make sure bootstrap.ts imports from '${langPath}'.`
         );
+        return {};
       }
 
-      return translations;
-    } catch {
+      return localizer.translations[locale] || {};
+    } catch (error) {
       console.warn(
-        `[Laravel Localizer] Could not load translations for locale: ${locale}. Default path is '${langPath}'.`
+        `[Laravel Localizer] Could not load translations for locale: ${locale}`,
+        error
       );
       return {};
     }

@@ -27,12 +27,41 @@ yarn add @devwizard/laravel-localizer-react
 
 ```bash
 composer require devwizardhq/laravel-localizer
-php artisan localizer:install --framework=react
+php artisan localizer:install
 ```
+
+The install command will:
+- ✅ Publish configuration files
+- ✅ Create default locale files
+- ✅ Install npm package (optional)
+- ✅ Generate initial TypeScript files
+
+**Note:** You'll need to manually add the bootstrap setup (see step 1 below).
 
 ## Setup
 
-### 1. Add Vite Plugin
+### 1. Initialize Translations in Bootstrap
+
+Add this to your `resources/js/bootstrap.ts`:
+
+```typescript
+import { translations } from '@/lang';
+
+declare global {
+    interface Window {
+        localizer: {
+            translations: Record<string, Record<string, string>>;
+        };
+    }
+}
+
+// Auto-initialize Laravel Localizer translations
+window.localizer = {
+    translations: translations,
+};
+```
+
+### 2. Add Vite Plugin
 
 Update your `vite.config.ts`:
 
@@ -51,13 +80,75 @@ export default defineConfig({
 });
 ```
 
-### 2. Generate Translation Files
+### 2. Add Vite Plugin
+
+Update your `vite.config.ts`:
+
+```typescript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { laravelLocalizer } from '@devwizard/laravel-localizer-react/vite';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    laravelLocalizer({
+      debug: true, // Enable debug logging (optional)
+    }),
+  ],
+});
+```
+
+### 3. Generate Translation Files
 
 ```bash
 php artisan localizer:generate --all
 ```
 
 This creates TypeScript files in `resources/js/lang/` directory.
+
+## How It Works
+
+The Laravel Localizer uses a simple and efficient approach:
+
+1. **Generate** - PHP generates TypeScript files from Laravel language files
+2. **Load** - Translations are loaded once at app startup via `window.localizer`
+3. **Access** - React components access translations synchronously via `useLocalizer` hook
+
+```
+┌─────────────────┐
+│  Laravel Lang   │  lang/en.json, lang/en/*.php
+│     Files       │
+└────────┬────────┘
+         │
+         │ php artisan localizer:generate
+         ▼
+┌─────────────────┐
+│   TypeScript    │  resources/js/lang/en.ts
+│     Files       │  resources/js/lang/index.ts
+└────────┬────────┘
+         │
+         │ import { translations } from '@/lang'
+         ▼
+┌─────────────────┐
+│ window.localizer│  { translations: { en: {...}, bn: {...} } }
+│                 │
+└────────┬────────┘
+         │
+         │ useLocalizer() hook
+         ▼
+┌─────────────────┐
+│ React Components│  {__('welcome')}
+└─────────────────┘
+```
+
+### Why `window.localizer`?
+
+- ✅ **Synchronous Access** - No async loading delays
+- ✅ **All Locales Ready** - All translations available immediately
+- ✅ **Build-time Optimization** - Vite can tree-shake unused translations
+- ✅ **Test-friendly** - Works in Jest/Vitest without mocking
+- ✅ **No Re-renders** - No useEffect or async state updates
 
 ## Usage
 
