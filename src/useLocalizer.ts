@@ -108,22 +108,6 @@ export interface UseLocalizerReturn {
 }
 
 /**
- * Options for useLocalizer hook
- */
-export interface UseLocalizerOptions {
-  /**
-   * Custom path to translations directory
-   * @default '@/lang'
-   * @example
-   * ```tsx
-   * // Use custom path
-   * const { __ } = useLocalizer({ langPath: '@/translations' });
-   * ```
-   */
-  langPath?: string;
-}
-
-/**
  * Replace placeholders in translation strings
  *
  * Supports both :placeholder and {placeholder} formats
@@ -149,10 +133,8 @@ function replacePlaceholders(text: string, replacements?: Replacements): string 
 /**
  * React hook for translations
  *
- * By default, translations are read from '@/lang' folder (resources/js/lang).
- * You can customize this by passing a langPath option.
+ * Translations are read from window.localizer which is initialized in bootstrap.ts.
  *
- * @param options - Configuration options for the localizer
  * @returns Translation utilities and locale information
  *
  * @example
@@ -171,19 +153,8 @@ function replacePlaceholders(text: string, replacements?: Replacements): string 
  *   );
  * }
  * ```
- *
- * @example
- * ```tsx
- * // Custom translations path
- * function MyComponent() {
- *   const { __ } = useLocalizer({ langPath: '@/translations' });
- *
- *   return <h1>{__('welcome')}</h1>;
- * }
- * ```
  */
-export function useLocalizer(options: UseLocalizerOptions = {}): UseLocalizerReturn {
-  const { langPath = '@/lang' } = options;
+export function useLocalizer(): UseLocalizerReturn {
   const { props } = usePage<PageProps>();
   const locale = props.locale?.current || 'en';
   const dir = props.locale?.dir || 'ltr';
@@ -191,8 +162,6 @@ export function useLocalizer(options: UseLocalizerOptions = {}): UseLocalizerRet
   const availableLocales = useMemo(() => props.locale?.available || {}, [props.locale?.available]);
 
   // Load translations from window object (initialized in bootstrap.ts)
-  // The langPath option is used by the vite plugin to know where to watch for changes
-  // and where the generated files should be located
   const translations = useMemo<Record<string, string>>(() => {
     try {
       // Translations are automatically loaded in bootstrap.ts from the generated files
@@ -206,7 +175,7 @@ export function useLocalizer(options: UseLocalizerOptions = {}): UseLocalizerRet
 
       if (!localizer?.translations) {
         console.warn(
-          `[Laravel Localizer] Translations not initialized. Make sure bootstrap.ts imports from '${langPath}'.`
+          '[Laravel Localizer] Translations not initialized. Make sure bootstrap.ts imports translations.'
         );
         return {};
       }
@@ -219,7 +188,7 @@ export function useLocalizer(options: UseLocalizerOptions = {}): UseLocalizerRet
       );
       return {};
     }
-  }, [locale, langPath]);
+  }, [locale]);
 
   /**
    * Main translation function
