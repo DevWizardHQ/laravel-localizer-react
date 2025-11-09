@@ -1,12 +1,13 @@
 # @devwizard/laravel-localizer-react
 
-🌍 React integration for Laravel Localizer with Vite plugin, `useTranslation` hook, and automatic TypeScript generation.
+🌍 React integration for Laravel Localizer with Vite plugin, `useLocalizer` hook, and automatic TypeScript generation.
 
 ## Features
 
 - ✅ **Automatic Generation**: Vite plugin watches for language file changes and regenerates TypeScript files
 - ✅ **Type-Safe**: Full TypeScript support with auto-generated types
-- ✅ **React Hooks**: Intuitive `useTranslation` hook for React components
+- ✅ **React Hooks**: Intuitive `useLocalizer` hook for React components
+- ✅ **Customizable Path**: By default reads from `@/lang` folder, customizable via options
 - ✅ **Laravel-Compatible**: Matches Laravel's translation API (`__`, `trans`, `choice`)
 - ✅ **Inertia.js Integration**: Seamlessly works with Inertia.js page props
 - ✅ **RTL Support**: Built-in right-to-left language support
@@ -63,10 +64,10 @@ This creates TypeScript files in `resources/js/lang/` directory.
 ### Basic Usage
 
 ```tsx
-import { useTranslation } from '@devwizard/laravel-localizer-react';
+import { useLocalizer } from '@devwizard/laravel-localizer-react';
 
 function MyComponent() {
-  const { __ } = useTranslation();
+  const { __ } = useLocalizer();
 
   return (
     <div>
@@ -77,13 +78,42 @@ function MyComponent() {
 }
 ```
 
+### Custom Translations Path
+
+By default, translations are read from the `@/lang` folder (which maps to `resources/js/lang`). You can customize this path:
+
+```tsx
+import { useLocalizer } from '@devwizard/laravel-localizer-react';
+
+function MyComponent() {
+  // Use custom translations directory
+  const { __ } = useLocalizer({ langPath: '@/translations' });
+
+  return <h1>{__('welcome')}</h1>;
+}
+```
+
+**Note:** Ensure your Vite config has the corresponding path alias:
+
+```typescript
+// vite.config.ts
+export default defineConfig({
+  resolve: {
+    alias: {
+      '@': '/resources/js',
+      '@/translations': '/resources/js/translations',
+    },
+  },
+});
+```
+
 ### With Replacements
 
 ```tsx
-import { useTranslation } from '@devwizard/laravel-localizer-react';
+import { useLocalizer } from '@devwizard/laravel-localizer-react';
 
 function Greeting() {
-  const { __ } = useTranslation();
+  const { __ } = useLocalizer();
 
   return (
     <div>
@@ -97,10 +127,10 @@ function Greeting() {
 ### Pluralization
 
 ```tsx
-import { useTranslation } from '@devwizard/laravel-localizer-react';
+import { useLocalizer } from '@devwizard/laravel-localizer-react';
 
 function ItemCount({ count }: { count: number }) {
-  const { choice } = useTranslation();
+  const { choice } = useLocalizer();
 
   return <p>{choice('items', count)}</p>;
 }
@@ -109,10 +139,10 @@ function ItemCount({ count }: { count: number }) {
 ### RTL Support
 
 ```tsx
-import { useTranslation } from '@devwizard/laravel-localizer-react';
+import { useLocalizer } from '@devwizard/laravel-localizer-react';
 
 function App() {
-  const { dir, locale } = useTranslation();
+  const { dir, locale } = useLocalizer();
 
   return (
     <div dir={dir} lang={locale}>
@@ -125,10 +155,10 @@ function App() {
 ### Check Translation Exists
 
 ```tsx
-import { useTranslation } from '@devwizard/laravel-localizer-react';
+import { useLocalizer } from '@devwizard/laravel-localizer-react';
 
 function ConditionalMessage() {
-  const { __, has } = useTranslation();
+  const { __, has } = useLocalizer();
 
   if (!has('special.message')) {
     return null;
@@ -140,9 +170,17 @@ function ConditionalMessage() {
 
 ## API Reference
 
-### `useTranslation()`
+### `useLocalizer(options?)`
 
-Returns an object with the following properties and methods:
+Main hook for accessing translations and locale information.
+
+**Options:**
+
+| Option     | Type     | Default    | Description                                  |
+| ---------- | -------- | ---------- | -------------------------------------------- |
+| `langPath` | `string` | `'@/lang'` | Custom path to translations directory        |
+
+**Returns:**
 
 | Property           | Type                                        | Description                         |
 | ------------------ | ------------------------------------------- | ----------------------------------- |

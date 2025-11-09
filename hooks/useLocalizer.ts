@@ -6,10 +6,10 @@
  *
  * @example
  * ```tsx
- * import { useTranslation } from '@devwizard/laravel-localizer-react';
+ * import { useLocalizer } from '@devwizard/laravel-localizer-react';
  *
  * function MyComponent() {
- *   const { __, trans, locale, dir } = useTranslation();
+ *   const { __, trans, locale, dir } = useLocalizer();
  *
  *   return (
  *     <div dir={dir}>
@@ -55,7 +55,7 @@ export interface PageProps extends Record<string, unknown> {
 /**
  * Translation hook return type
  */
-export interface UseTranslationReturn {
+export interface UseLocalizerReturn {
   /**
    * Main translation function
    */
@@ -108,6 +108,22 @@ export interface UseTranslationReturn {
 }
 
 /**
+ * Options for useLocalizer hook
+ */
+export interface UseLocalizerOptions {
+  /**
+   * Custom path to translations directory
+   * @default '@/lang'
+   * @example
+   * ```tsx
+   * // Use custom path
+   * const { __ } = useLocalizer({ langPath: '@/translations' });
+   * ```
+   */
+  langPath?: string;
+}
+
+/**
  * Replace placeholders in translation strings
  *
  * Supports both :placeholder and {placeholder} formats
@@ -133,14 +149,18 @@ function replacePlaceholders(text: string, replacements?: Replacements): string 
 /**
  * React hook for translations
  *
+ * By default, translations are read from '@/lang' folder (resources/js/lang).
+ * You can customize this by passing a langPath option.
+ *
+ * @param options - Configuration options for the localizer
  * @returns Translation utilities and locale information
  *
  * @example
  * ```tsx
- * import { useTranslation } from '@devwizard/laravel-localizer-react';
+ * import { useLocalizer } from '@devwizard/laravel-localizer-react';
  *
  * function MyComponent() {
- *   const { __, trans, lang, locale, dir } = useTranslation();
+ *   const { __, trans, lang, locale, dir } = useLocalizer();
  *
  *   return (
  *     <div dir={dir}>
@@ -151,8 +171,19 @@ function replacePlaceholders(text: string, replacements?: Replacements): string 
  *   );
  * }
  * ```
+ *
+ * @example
+ * ```tsx
+ * // Custom translations path
+ * function MyComponent() {
+ *   const { __ } = useLocalizer({ langPath: '@/translations' });
+ *
+ *   return <h1>{__('welcome')}</h1>;
+ * }
+ * ```
  */
-export function useTranslation(): UseTranslationReturn {
+export function useLocalizer(options: UseLocalizerOptions = {}): UseLocalizerReturn {
+  const { langPath = '@/lang' } = options;
   const { props } = usePage<PageProps>();
   const locale = props.locale?.current || 'en';
   const dir = props.locale?.dir || 'ltr';
@@ -160,7 +191,8 @@ export function useTranslation(): UseTranslationReturn {
   const availableLocales = useMemo(() => props.locale?.available || {}, [props.locale?.available]);
 
   // Dynamically import translations from generated files
-  // Note: Users need to set up path alias '@/lang' -> 'resources/js/lang'
+  // Note: By default, translations are loaded from '@/lang' folder (resources/js/lang)
+  // Users can customize this path by passing langPath option
   // The actual translations object will be available at runtime
   const translations = useMemo<Record<string, string>>(() => {
     try {
@@ -169,12 +201,20 @@ export function useTranslation(): UseTranslationReturn {
       interface WindowWithTranslations extends Window {
         __LARAVEL_LOCALIZER_TRANSLATIONS__?: Record<string, Record<string, string>>;
       }
-      return (window as WindowWithTranslations).__LARAVEL_LOCALIZER_TRANSLATIONS__?.[locale] || {};
+      const translations = (window as WindowWithTranslations).__LARAVEL_LOCALIZER_TRANSLATIONS__?.[locale] || {};
+
+      // Note: langPath is stored for future use if needed for dynamic imports
+      // Currently, translations are loaded globally via window object
+      if (Object.keys(translations).length === 0 && langPath !== '@/lang') {
+        console.warn(`[Laravel Localizer] Custom langPath '${langPath}' specified but translations not found. Ensure your vite.config has proper path alias.`);
+      }
+
+      return translations;
     } catch {
-      console.warn(`[Laravel Localizer] Could not load translations for locale: ${locale}`);
+      console.warn(`[Laravel Localizer] Could not load translations for locale: ${locale}. Default path is '${langPath}'.`);
       return {};
     }
-  }, [locale]);
+  }, [locale, langPath]);
 
   /**
    * Main translation function

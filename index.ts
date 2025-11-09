@@ -2,7 +2,8 @@ export type {
   Replacements,
   LocaleData,
   PageProps,
-  UseTranslationReturn,
-} from './hooks/useTranslation';
+  UseLocalizerReturn,
+  UseLocalizerOptions,
+} from './hooks/useLocalizer';
 
-export { useTranslation } from './hooks/useTranslation';
+export { useLocalizer } from './hooks/useLocalizer';
