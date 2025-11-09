@@ -176,9 +176,9 @@ Main hook for accessing translations and locale information.
 
 **Options:**
 
-| Option     | Type     | Default    | Description                                  |
-| ---------- | -------- | ---------- | -------------------------------------------- |
-| `langPath` | `string` | `'@/lang'` | Custom path to translations directory        |
+| Option     | Type     | Default    | Description                           |
+| ---------- | -------- | ---------- | ------------------------------------- |
+| `langPath` | `string` | `'@/lang'` | Custom path to translations directory |
 
 **Returns:**
 
