@@ -74,10 +74,10 @@ export default defineConfig({
     laravelLocalizer({
       // Watch patterns for language file changes
       patterns: ['lang/**', 'resources/lang/**'],
-      
+
       // Command to run when files change
       command: 'php artisan localizer:generate --all',
-      
+
       // Enable debug logging (optional)
       debug: false,
     }),
@@ -86,6 +86,7 @@ export default defineConfig({
 ```
 
 **What it does:**
+
 - Watches for changes in `lang/**` and `resources/lang/**`
 - Automatically runs `php artisan localizer:generate --all` when files change
 - Triggers HMR to reload your frontend with updated translations
@@ -197,7 +198,7 @@ function GreetingComponent() {
       {/* Supports :placeholder format */}
       <p>{__('greeting', { name: 'John' })}</p>
       {/* "Hello :name!" → "Hello John!" */}
-      
+
       {/* Also supports {placeholder} format */}
       <p>{__('items', { count: 5 })}</p>
       {/* "You have {count} items" → "You have 5 items" */}
@@ -218,12 +219,12 @@ function ItemCounter({ count }: { count: number }) {
     <div>
       {/* Define in your translation file: */}
       {/* "apples": "no apples|one apple|many apples" */}
-      
+
       <p>{choice('apples', count)}</p>
       {/* count = 0: "no apples" */}
       {/* count = 1: "one apple" */}
       {/* count = 5: "many apples" */}
-      
+
       {/* With replacements */}
       <p>{choice('apples', count, { count })}</p>
       {/* "You have {count} apples" → "You have 5 apples" */}
@@ -243,11 +244,7 @@ function ConditionalTranslation() {
   return (
     <div>
       {has('welcome') && <h1>{__('welcome')}</h1>}
-      {has('custom.message') ? (
-        <p>{__('custom.message')}</p>
-      ) : (
-        <p>Default message</p>
-      )}
+      {has('custom.message') ? <p>{__('custom.message')}</p> : <p>Default message</p>}
     </div>
   );
 }
@@ -282,7 +279,7 @@ function LocaleInfo() {
     <div dir={dir}>
       <p>Current Locale: {locale}</p>
       <p>Text Direction: {dir}</p>
-      
+
       <select value={locale}>
         {Object.entries(availableLocales).map(([code, meta]) => (
           <option key={code} value={code}>
@@ -335,30 +332,30 @@ function TranslationDebugger() {
 
 Returns an object with the following properties and methods:
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `__` | `(key: string, replacements?: Replacements, fallback?: string) => string` | Main translation function |
-| `trans` | `(key: string, replacements?: Replacements, fallback?: string) => string` | Alias for `__()` |
-| `lang` | `(key: string, replacements?: Replacements, fallback?: string) => string` | Alias for `__()` |
-| `has` | `(key: string) => boolean` | Check if translation key exists |
-| `choice` | `(key: string, count: number, replacements?: Replacements) => string` | Pluralization support |
-| `locale` | `string` | Current locale code (e.g., 'en') |
-| `dir` | `'ltr' \| 'rtl'` | Text direction |
-| `availableLocales` | `Record<string, LocaleMeta>` | Available locales with metadata |
-| `translations` | `Record<string, string>` | All translations for current locale |
+| Property           | Type                                                                      | Description                         |
+| ------------------ | ------------------------------------------------------------------------- | ----------------------------------- |
+| `__`               | `(key: string, replacements?: Replacements, fallback?: string) => string` | Main translation function           |
+| `trans`            | `(key: string, replacements?: Replacements, fallback?: string) => string` | Alias for `__()`                    |
+| `lang`             | `(key: string, replacements?: Replacements, fallback?: string) => string` | Alias for `__()`                    |
+| `has`              | `(key: string) => boolean`                                                | Check if translation key exists     |
+| `choice`           | `(key: string, count: number, replacements?: Replacements) => string`     | Pluralization support               |
+| `locale`           | `string`                                                                  | Current locale code (e.g., 'en')    |
+| `dir`              | `'ltr' \| 'rtl'`                                                          | Text direction                      |
+| `availableLocales` | `Record<string, LocaleMeta>`                                              | Available locales with metadata     |
+| `translations`     | `Record<string, string>`                                                  | All translations for current locale |
 
 ### Vite Plugin Options
 
 ```typescript
 interface LocalizerOptions {
   // Watch patterns for language file changes
-  patterns?: string[];  // default: ['lang/**', 'resources/lang/**']
-  
+  patterns?: string[]; // default: ['lang/**', 'resources/lang/**']
+
   // Command to run when files change
-  command?: string;  // default: 'php artisan localizer:generate --all'
-  
+  command?: string; // default: 'php artisan localizer:generate --all'
+
   // Enable debug logging
-  debug?: boolean;  // default: false
+  debug?: boolean; // default: false
 }
 ```
 
@@ -367,12 +364,12 @@ interface LocalizerOptions {
 The package is written in TypeScript and provides full type definitions:
 
 ```typescript
-import { 
-  useLocalizer, 
+import {
+  useLocalizer,
   UseLocalizerReturn,
   Replacements,
   LocaleData,
-  PageProps 
+  PageProps,
 } from '@devwizard/laravel-localizer-react';
 
 // All types are available for import
@@ -438,12 +435,12 @@ function LoginForm() {
         <input type="email" required />
         <span className="error">{__('validation.required')}</span>
       </div>
-      
+
       <div>
         <label>{__('auth.password')}</label>
         <input type="password" required />
       </div>
-      
+
       <button type="submit">{__('auth.login')}</button>
     </form>
   );
@@ -525,9 +522,7 @@ export default function Dashboard({ auth, stats }: DashboardProps) {
               </h1>
 
               {/* Notification count */}
-              <p className="mb-4">
-                {__('notifications', { count: stats.notifications })}
-              </p>
+              <p className="mb-4">{__('notifications', { count: stats.notifications })}</p>
 
               {/* Statistics with pluralization */}
               <div className="grid grid-cols-2 gap-4">

@@ -126,4 +126,3 @@ Seamless integration with Inertia.js:
 - React 18+
 - Inertia.js v1 or v2
 - Laravel Localizer backend package
-

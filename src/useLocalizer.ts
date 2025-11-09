@@ -182,10 +182,7 @@ export function useLocalizer(): UseLocalizerReturn {
 
       return localizer.translations[locale] || {};
     } catch (error) {
-      console.warn(
-        `[Laravel Localizer] Could not load translations for locale: ${locale}`,
-        error
-      );
+      console.warn(`[Laravel Localizer] Could not load translations for locale: ${locale}`, error);
       return {};
     }
   }, [locale]);
