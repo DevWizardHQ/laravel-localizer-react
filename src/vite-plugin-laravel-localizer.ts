@@ -57,20 +57,21 @@ export const laravelLocalizer = ({
   patterns = patterns.map((pattern) => pattern.replace(/\\/g, '/'));
 
   /**
-   * Execute the generation command
+   * Execute the generation command (non-blocking)
    */
-  const runCommand = async (): Promise<void> => {
-    try {
-      if (debug) {
-        context.info('Generating translation types...');
-      }
-
-      await execAsync(command);
-
-      context.info('Translation types generated successfully');
-    } catch (error) {
-      context.error('Error generating translation types: ' + error);
+  const runCommand = (): void => {
+    if (debug) {
+      context.info('Generating translation types...');
     }
+
+    // Run command without awaiting to prevent blocking
+    execAsync(command)
+      .then(() => {
+        context.info('Translation types generated successfully');
+      })
+      .catch((error) => {
+        context.error('Error generating translation types: ' + error);
+      });
   };
 
   return {
@@ -82,20 +83,20 @@ export const laravelLocalizer = ({
      */
     buildStart() {
       context = this;
-      return runCommand();
+      runCommand();
     },
 
     /**
      * Watch for changes in development mode
      */
-    async handleHotUpdate({ file, server }) {
+    handleHotUpdate({ file, server }) {
       if (shouldRun(patterns, { file, server })) {
         if (debug) {
           const fileName = file.split('/').pop();
           context.info(`Detected change in ${fileName}`);
         }
 
-        await runCommand();
+        runCommand();
       }
     },
   };
