@@ -27,23 +27,25 @@ describe('useLocalizer', () => {
     });
 
     // Mock window translations
-    (window as any).__LARAVEL_LOCALIZER_TRANSLATIONS__ = {
-      en: {
-        welcome: 'Welcome',
-        'validation.required': 'This field is required',
-        'greeting.hello': 'Hello :name!',
-        'items.count': 'You have :count items',
-      },
-      bn: {
-        welcome: 'স্বাগতম',
-        'validation.required': 'এই ক্ষেত্রটি আবশ্যক',
+    (window as any).localizer = {
+      translations: {
+        en: {
+          welcome: 'Welcome',
+          'validation.required': 'This field is required',
+          'greeting.hello': 'Hello :name!',
+          'items.count': 'You have :count items',
+        },
+        bn: {
+          welcome: 'স্বাগতম',
+          'validation.required': 'এই ক্ষেত্রটি আবশ্যক',
+        },
       },
     };
   });
 
   afterEach(() => {
     jest.clearAllMocks();
-    delete (window as any).__LARAVEL_LOCALIZER_TRANSLATIONS__;
+    delete (window as any).localizer;
   });
 
   describe('Basic Translation', () => {
@@ -139,8 +141,7 @@ describe('useLocalizer', () => {
     });
 
     it('should merge count with other replacements', () => {
-      (window as any).__LARAVEL_LOCALIZER_TRANSLATIONS__.en['user.items'] =
-        ':name has :count items';
+      (window as any).localizer.translations.en['user.items'] = ':name has :count items';
 
       const { result } = renderHook(() => useLocalizer());
 
@@ -229,7 +230,6 @@ describe('useLocalizer', () => {
         'validation.required': 'This field is required',
         'greeting.hello': 'Hello :name!',
         'items.count': 'You have :count items',
-        'user.items': ':name has :count items',
       });
     });
   });

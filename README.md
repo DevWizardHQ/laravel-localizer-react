@@ -1,154 +1,169 @@
 # @devwizard/laravel-localizer-react
 
-🌍 React integration for Laravel Localizer with Vite plugin, `useLocalizer` hook, and automatic TypeScript generation.
+[![npm version](https://img.shields.io/npm/v/@devwizard/laravel-localizer-react.svg)](https://www.npmjs.com/package/@devwizard/laravel-localizer-react)
+[![npm downloads](https://img.shields.io/npm/dm/@devwizard/laravel-localizer-react.svg)](https://www.npmjs.com/package/@devwizard/laravel-localizer-react)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+React integration for [Laravel Localizer](https://github.com/devwizardhq/laravel-localizer) - seamlessly use Laravel translations in your React/Inertia.js applications with full TypeScript support.
 
 ## Features
 
-- ✅ **Automatic Generation**: Vite plugin watches for language file changes and regenerates TypeScript files
-- ✅ **Type-Safe**: Full TypeScript support with auto-generated types
-- ✅ **React Hooks**: Intuitive `useLocalizer` hook for React components
-- ✅ **Customizable Path**: By default reads from `@/lang` folder, customizable via options
-- ✅ **Laravel-Compatible**: Matches Laravel's translation API (`__`, `trans`, `choice`)
-- ✅ **Inertia.js Integration**: Seamlessly works with Inertia.js page props
-- ✅ **RTL Support**: Built-in right-to-left language support
-- ✅ **Zero Dependencies**: Only peer dependencies on React and Inertia
+- 🎣 **React Hook** - `useLocalizer()` hook for easy translation access
+- 🔌 **Vite Plugin** - Auto-regenerates TypeScript translations on file changes
+- 🎯 **TypeScript** - Full type safety with TypeScript support
+- ⚡ **Inertia.js** - Native integration with Inertia.js page props
+- 🌐 **Pluralization** - Built-in pluralization support
+- 🔄 **Replacements** - Dynamic placeholder replacement
+- 🌍 **RTL Support** - Automatic text direction detection
+- 📦 **Tree-shakeable** - Modern ESM build
+
+## Requirements
+
+- React 18 or 19
+- Inertia.js v1 or v2
+- Laravel Localizer backend package
 
 ## Installation
 
 ```bash
 npm install @devwizard/laravel-localizer-react
-# or
-pnpm add @devwizard/laravel-localizer-react
-# or
-yarn add @devwizard/laravel-localizer-react
 ```
 
-**Backend (Composer):**
+## Backend Setup
+
+First, install and configure the Laravel Localizer package:
 
 ```bash
 composer require devwizardhq/laravel-localizer
 php artisan localizer:install
 ```
 
-The install command will:
-- ✅ Publish configuration files
-- ✅ Create default locale files
-- ✅ Install npm package (optional)
-- ✅ Generate initial TypeScript files
-
-**Note:** You'll need to manually add the bootstrap setup (see step 1 below).
+See the [Laravel Localizer documentation](https://github.com/devwizardhq/laravel-localizer) for complete backend setup.
 
 ## Setup
 
-### 1. Initialize Translations in Bootstrap
+### Step 1: Generate Translation Files
 
-Add this to your `resources/js/bootstrap.ts`:
-
-```typescript
-import { translations } from '@/lang';
-
-declare global {
-    interface Window {
-        localizer: {
-            translations: Record<string, Record<string, string>>;
-        };
-    }
-}
-
-// Auto-initialize Laravel Localizer translations
-window.localizer = {
-    translations: translations,
-};
-```
-
-### 2. Add Vite Plugin
-
-Update your `vite.config.ts`:
-
-```typescript
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { laravelLocalizer } from '@devwizard/laravel-localizer-react/vite';
-
-export default defineConfig({
-  plugins: [
-    react(),
-    laravelLocalizer({
-      debug: true, // Enable debug logging (optional)
-    }),
-  ],
-});
-```
-
-### 2. Add Vite Plugin
-
-Update your `vite.config.ts`:
-
-```typescript
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { laravelLocalizer } from '@devwizard/laravel-localizer-react/vite';
-
-export default defineConfig({
-  plugins: [
-    react(),
-    laravelLocalizer({
-      debug: true, // Enable debug logging (optional)
-    }),
-  ],
-});
-```
-
-### 3. Generate Translation Files
+First, generate TypeScript translation files from your Laravel app:
 
 ```bash
 php artisan localizer:generate --all
 ```
 
-This creates TypeScript files in `resources/js/lang/` directory.
+This creates files like `resources/js/lang/en.ts`, `resources/js/lang/fr.ts`, etc.
 
-## How It Works
+### Step 2: Configure Vite Plugin
 
-The Laravel Localizer uses a simple and efficient approach:
+Add the Vite plugin to auto-regenerate translations when language files change.
 
-1. **Generate** - PHP generates TypeScript files from Laravel language files
-2. **Load** - Translations are loaded once at app startup via `window.localizer`
-3. **Access** - React components access translations synchronously via `useLocalizer` hook
+**File: `vite.config.ts`**
 
-```
-┌─────────────────┐
-│  Laravel Lang   │  lang/en.json, lang/en/*.php
-│     Files       │
-└────────┬────────┘
-         │
-         │ php artisan localizer:generate
-         ▼
-┌─────────────────┐
-│   TypeScript    │  resources/js/lang/en.ts
-│     Files       │  resources/js/lang/index.ts
-└────────┬────────┘
-         │
-         │ import { translations } from '@/lang'
-         ▼
-┌─────────────────┐
-│ window.localizer│  { translations: { en: {...}, bn: {...} } }
-│                 │
-└────────┬────────┘
-         │
-         │ useLocalizer() hook
-         ▼
-┌─────────────────┐
-│ React Components│  {__('welcome')}
-└─────────────────┘
+```typescript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import laravel from 'laravel-vite-plugin';
+import { laravelLocalizer } from '@devwizard/laravel-localizer-react/vite';
+
+export default defineConfig({
+  plugins: [
+    laravel({
+      input: ['resources/js/app.tsx'],
+      refresh: true,
+    }),
+    react(),
+    laravelLocalizer({
+      // Watch patterns for language file changes
+      patterns: ['lang/**', 'resources/lang/**'],
+      
+      // Command to run when files change
+      command: 'php artisan localizer:generate --all',
+      
+      // Enable debug logging (optional)
+      debug: false,
+    }),
+  ],
+});
 ```
 
-### Why `window.localizer`?
+**What it does:**
+- Watches for changes in `lang/**` and `resources/lang/**`
+- Automatically runs `php artisan localizer:generate --all` when files change
+- Triggers HMR to reload your frontend with updated translations
 
-- ✅ **Synchronous Access** - No async loading delays
-- ✅ **All Locales Ready** - All translations available immediately
-- ✅ **Build-time Optimization** - Vite can tree-shake unused translations
-- ✅ **Test-friendly** - Works in Jest/Vitest without mocking
-- ✅ **No Re-renders** - No useEffect or async state updates
+### Step 3: Initialize Window Translations
+
+Set up the global `window.localizer` object in your app entry point.
+
+**File: `resources/js/app.tsx`**
+
+```typescript
+import './bootstrap';
+import '../css/app.css';
+
+import { createRoot } from 'react-dom/client';
+import { createInertiaApp } from '@inertiajs/react';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+
+// Import all generated translation files
+import * as translations from './lang';
+
+const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+
+createInertiaApp({
+  title: (title) => `${title} - ${appName}`,
+  resolve: (name) =>
+    resolvePageComponent(
+      `./Pages/${name}.tsx`,
+      import.meta.glob('./Pages/**/*.tsx')
+    ),
+  setup({ el, App, props }) {
+    // Initialize window.localizer with translations
+    if (typeof window !== 'undefined') {
+      window.localizer = {
+        translations,
+      };
+    }
+
+    createRoot(el).render(<App {...props} />);
+  },
+  progress: {
+    color: '#4B5563',
+  },
+});
+```
+
+**Alternative: Create a separate file**
+
+**File: `resources/js/lang/index.ts`**
+
+```typescript
+// Export all generated translations
+export * from './en';
+export * from './fr';
+export * from './ar';
+// ... add other locales as needed
+```
+
+**File: `resources/js/app.tsx`**
+
+```typescript
+import * as translations from './lang';
+
+// ... in setup()
+window.localizer = { translations };
+```
+
+### 3. Configure TypeScript (Optional)
+
+Add types to your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["@devwizard/laravel-localizer-react"]
+  }
+}
+```
 
 ## Usage
 
@@ -157,7 +172,7 @@ The Laravel Localizer uses a simple and efficient approach:
 ```tsx
 import { useLocalizer } from '@devwizard/laravel-localizer-react';
 
-function MyComponent() {
+function WelcomeComponent() {
   const { __ } = useLocalizer();
 
   return (
@@ -169,47 +184,23 @@ function MyComponent() {
 }
 ```
 
-### Custom Translations Path
-
-By default, translations are read from the `@/lang` folder (which maps to `resources/js/lang`). You can customize this path:
-
-```tsx
-import { useLocalizer } from '@devwizard/laravel-localizer-react';
-
-function MyComponent() {
-  // Use custom translations directory
-  const { __ } = useLocalizer({ langPath: '@/translations' });
-
-  return <h1>{__('welcome')}</h1>;
-}
-```
-
-**Note:** Ensure your Vite config has the corresponding path alias:
-
-```typescript
-// vite.config.ts
-export default defineConfig({
-  resolve: {
-    alias: {
-      '@': '/resources/js',
-      '@/translations': '/resources/js/translations',
-    },
-  },
-});
-```
-
 ### With Replacements
 
 ```tsx
 import { useLocalizer } from '@devwizard/laravel-localizer-react';
 
-function Greeting() {
+function GreetingComponent() {
   const { __ } = useLocalizer();
 
   return (
     <div>
-      <p>{__('Hello :name!', { name: 'John' })}</p>
-      {/* Output: Hello John! */}
+      {/* Supports :placeholder format */}
+      <p>{__('greeting', { name: 'John' })}</p>
+      {/* "Hello :name!" → "Hello John!" */}
+      
+      {/* Also supports {placeholder} format */}
+      <p>{__('items', { count: 5 })}</p>
+      {/* "You have {count} items" → "You have 5 items" */}
     </div>
   );
 }
@@ -220,10 +211,87 @@ function Greeting() {
 ```tsx
 import { useLocalizer } from '@devwizard/laravel-localizer-react';
 
-function ItemCount({ count }: { count: number }) {
+function ItemCounter({ count }: { count: number }) {
   const { choice } = useLocalizer();
 
-  return <p>{choice('items', count)}</p>;
+  return (
+    <div>
+      {/* Define in your translation file: */}
+      {/* "apples": "no apples|one apple|many apples" */}
+      
+      <p>{choice('apples', count)}</p>
+      {/* count = 0: "no apples" */}
+      {/* count = 1: "one apple" */}
+      {/* count = 5: "many apples" */}
+      
+      {/* With replacements */}
+      <p>{choice('apples', count, { count })}</p>
+      {/* "You have {count} apples" → "You have 5 apples" */}
+    </div>
+  );
+}
+```
+
+### Checking Translation Existence
+
+```tsx
+import { useLocalizer } from '@devwizard/laravel-localizer-react';
+
+function ConditionalTranslation() {
+  const { __, has } = useLocalizer();
+
+  return (
+    <div>
+      {has('welcome') && <h1>{__('welcome')}</h1>}
+      {has('custom.message') ? (
+        <p>{__('custom.message')}</p>
+      ) : (
+        <p>Default message</p>
+      )}
+    </div>
+  );
+}
+```
+
+### With Fallback
+
+```tsx
+import { useLocalizer } from '@devwizard/laravel-localizer-react';
+
+function SafeTranslation() {
+  const { __ } = useLocalizer();
+
+  return (
+    <div>
+      {/* Use fallback for missing keys */}
+      <p>{__('might.not.exist', {}, 'Default Text')}</p>
+    </div>
+  );
+}
+```
+
+### Locale Information
+
+```tsx
+import { useLocalizer } from '@devwizard/laravel-localizer-react';
+
+function LocaleInfo() {
+  const { locale, dir, availableLocales } = useLocalizer();
+
+  return (
+    <div dir={dir}>
+      <p>Current Locale: {locale}</p>
+      <p>Text Direction: {dir}</p>
+      
+      <select value={locale}>
+        {Object.entries(availableLocales).map(([code, meta]) => (
+          <option key={code} value={code}>
+            {meta.flag} {meta.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 }
 ```
 
@@ -232,125 +300,299 @@ function ItemCount({ count }: { count: number }) {
 ```tsx
 import { useLocalizer } from '@devwizard/laravel-localizer-react';
 
-function App() {
-  const { dir, locale } = useLocalizer();
+function RTLAwareComponent() {
+  const { __, dir } = useLocalizer();
 
   return (
-    <div dir={dir} lang={locale}>
-      {/* Your app content */}
+    <div dir={dir} className={dir === 'rtl' ? 'text-right' : 'text-left'}>
+      <h1>{__('welcome')}</h1>
+      <p>{__('description')}</p>
     </div>
   );
 }
 ```
 
-### Check Translation Exists
+### Accessing All Translations
 
 ```tsx
 import { useLocalizer } from '@devwizard/laravel-localizer-react';
 
-function ConditionalMessage() {
-  const { __, has } = useLocalizer();
+function TranslationDebugger() {
+  const { translations } = useLocalizer();
 
-  if (!has('special.message')) {
-    return null;
-  }
-
-  return <p>{__('special.message')}</p>;
+  return (
+    <div>
+      <h2>All Translations:</h2>
+      <pre>{JSON.stringify(translations, null, 2)}</pre>
+    </div>
+  );
 }
 ```
 
 ## API Reference
 
-### `useLocalizer(options?)`
+### `useLocalizer()`
 
-Main hook for accessing translations and locale information.
+Returns an object with the following properties and methods:
 
-**Options:**
+| Property | Type | Description |
+|----------|------|-------------|
+| `__` | `(key: string, replacements?: Replacements, fallback?: string) => string` | Main translation function |
+| `trans` | `(key: string, replacements?: Replacements, fallback?: string) => string` | Alias for `__()` |
+| `lang` | `(key: string, replacements?: Replacements, fallback?: string) => string` | Alias for `__()` |
+| `has` | `(key: string) => boolean` | Check if translation key exists |
+| `choice` | `(key: string, count: number, replacements?: Replacements) => string` | Pluralization support |
+| `locale` | `string` | Current locale code (e.g., 'en') |
+| `dir` | `'ltr' \| 'rtl'` | Text direction |
+| `availableLocales` | `Record<string, LocaleMeta>` | Available locales with metadata |
+| `translations` | `Record<string, string>` | All translations for current locale |
 
-| Option     | Type     | Default    | Description                           |
-| ---------- | -------- | ---------- | ------------------------------------- |
-| `langPath` | `string` | `'@/lang'` | Custom path to translations directory |
-
-**Returns:**
-
-| Property           | Type                                        | Description                         |
-| ------------------ | ------------------------------------------- | ----------------------------------- |
-| `__`               | `(key, replacements?, fallback?) => string` | Main translation function           |
-| `trans`            | `(key, replacements?, fallback?) => string` | Alias for `__`                      |
-| `lang`             | `(key, replacements?, fallback?) => string` | Alias for `__`                      |
-| `has`              | `(key) => boolean`                          | Check if translation key exists     |
-| `choice`           | `(key, count, replacements?) => string`     | Pluralization support               |
-| `locale`           | `string`                                    | Current locale code                 |
-| `dir`              | `'ltr' \| 'rtl'`                            | Text direction                      |
-| `availableLocales` | `Record<string, LocaleInfo>`                | Available locales with metadata     |
-| `translations`     | `Record<string, string>`                    | All translations for current locale |
-| `getLocales`       | `() => string[]`                            | Get all available locale codes      |
-
-## Vite Plugin Options
+### Vite Plugin Options
 
 ```typescript
-laravelLocalizer({
-  // Command to run when lang files change
-  command: 'php artisan localizer:generate --all',
-
-  // Watch paths for changes
-  watch: ['lang/**', 'resources/lang/**'],
-
+interface LocalizerOptions {
+  // Watch patterns for language file changes
+  patterns?: string[];  // default: ['lang/**', 'resources/lang/**']
+  
+  // Command to run when files change
+  command?: string;  // default: 'php artisan localizer:generate --all'
+  
   // Enable debug logging
-  debug: false,
-
-  // Debounce delay in milliseconds
-  debounce: 300,
-});
-```
-
-## Backend Integration
-
-Ensure your Laravel backend passes locale data via Inertia:
-
-```php
-// In your HandleInertiaRequests middleware or controller
-
-use Illuminate\Support\Facades\App;
-
-Inertia::share([
-    'locale' => [
-        'current' => App::getLocale(),
-        'dir' => in_array(App::getLocale(), ['ar', 'he', 'fa', 'ur']) ? 'rtl' : 'ltr',
-        'available' => [
-            'en' => ['label' => 'English', 'flag' => '🇺🇸', 'dir' => 'ltr'],
-            'bn' => ['label' => 'বাংলা', 'flag' => '🇧🇩', 'dir' => 'ltr'],
-            'ar' => ['label' => 'العربية', 'flag' => '🇸🇦', 'dir' => 'rtl'],
-        ],
-    ],
-]);
+  debug?: boolean;  // default: false
+}
 ```
 
 ## TypeScript Support
 
-The package is fully typed. Generated translation files include TypeScript definitions:
+The package is written in TypeScript and provides full type definitions:
 
 ```typescript
-// Generated by localizer:generate
-export const en = {
-  welcome: 'Welcome',
-  'validation.required': 'This field is required',
-} as const;
+import { 
+  useLocalizer, 
+  UseLocalizerReturn,
+  Replacements,
+  LocaleData,
+  PageProps 
+} from '@devwizard/laravel-localizer-react';
 
-export type TranslationKeys = keyof typeof en;
+// All types are available for import
 ```
+
+## Testing
+
+The package includes comprehensive tests using Jest and React Testing Library:
+
+```bash
+# Run tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Generate coverage report
+npm run test:coverage
+```
+
+## Examples
+
+### Language Switcher
+
+```tsx
+import { router } from '@inertiajs/react';
+import { useLocalizer } from '@devwizard/laravel-localizer-react';
+
+function LanguageSwitcher() {
+  const { locale, availableLocales } = useLocalizer();
+
+  const changeLocale = (newLocale: string) => {
+    router.visit(route('locale.switch', { locale: newLocale }), {
+      preserveScroll: true,
+      preserveState: true,
+    });
+  };
+
+  return (
+    <select value={locale} onChange={(e) => changeLocale(e.target.value)}>
+      {Object.entries(availableLocales).map(([code, meta]) => (
+        <option key={code} value={code}>
+          {meta.flag} {meta.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+```
+
+### Form Validation
+
+```tsx
+import { useLocalizer } from '@devwizard/laravel-localizer-react';
+
+function LoginForm() {
+  const { __ } = useLocalizer();
+
+  return (
+    <form>
+      <div>
+        <label>{__('auth.email')}</label>
+        <input type="email" required />
+        <span className="error">{__('validation.required')}</span>
+      </div>
+      
+      <div>
+        <label>{__('auth.password')}</label>
+        <input type="password" required />
+      </div>
+      
+      <button type="submit">{__('auth.login')}</button>
+    </form>
+  );
+}
+```
+
+## Complete Working Example
+
+Here's a full example of a multilingual user dashboard:
+
+**Backend: `lang/en.json`**
+
+```json
+{
+  "welcome": "Welcome",
+  "dashboard": "Dashboard",
+  "greeting": "Hello, :name!",
+  "notifications": "You have :count notifications"
+}
+```
+
+**Backend: `lang/en/dashboard.php`**
+
+```php
+<?php
+
+return [
+    'title' => 'User Dashboard',
+    'stats' => [
+        'users' => '{0} No users|{1} One user|[2,*] :count users',
+        'posts' => 'You have :count posts',
+    ],
+];
+```
+
+**Generate translations:**
+
+```bash
+php artisan localizer:generate --all
+```
+
+**Frontend: `resources/js/Pages/Dashboard.tsx`**
+
+```tsx
+import { Head } from '@inertiajs/react';
+import { useLocalizer } from '@devwizard/laravel-localizer-react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { PageProps } from '@/types';
+
+interface DashboardProps extends PageProps {
+  stats: {
+    users: number;
+    posts: number;
+    notifications: number;
+  };
+}
+
+export default function Dashboard({ auth, stats }: DashboardProps) {
+  const { __, choice, locale, dir } = useLocalizer();
+
+  return (
+    <AuthenticatedLayout
+      user={auth.user}
+      header={
+        <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+          {__('dashboard.title')}
+        </h2>
+      }
+    >
+      <Head title={__('dashboard')} />
+
+      <div className="py-12" dir={dir}>
+        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div className="p-6 text-gray-900">
+              {/* Greeting with replacement */}
+              <h1 className="text-2xl font-bold mb-4">
+                {__('greeting', { name: auth.user.name })}
+              </h1>
+
+              {/* Notification count */}
+              <p className="mb-4">
+                {__('notifications', { count: stats.notifications })}
+              </p>
+
+              {/* Statistics with pluralization */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-blue-50 rounded">
+                  <h3 className="font-semibold">Users</h3>
+                  <p>{choice('dashboard.stats.users', stats.users, { count: stats.users })}</p>
+                </div>
+
+                <div className="p-4 bg-green-50 rounded">
+                  <h3 className="font-semibold">Posts</h3>
+                  <p>{__('dashboard.stats.posts', { count: stats.posts })}</p>
+                </div>
+              </div>
+
+              {/* Locale info */}
+              <div className="mt-4 text-sm text-gray-500">
+                <p>Current locale: {locale}</p>
+                <p>Text direction: {dir}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </AuthenticatedLayout>
+  );
+}
+```
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+
+# Build the package
+npm run build
+
+# Run linter
+npm run lint
+
+# Format code
+npm run format
+```
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for recent changes.
 
 ## License
 
-MIT
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
+
+## Related Packages
+
+- [Laravel Localizer](https://github.com/devwizardhq/laravel-localizer) - Backend package
+- [@devwizard/laravel-localizer-vue](https://www.npmjs.com/package/@devwizard/laravel-localizer-vue) - Vue integration
 
 ## Credits
 
-- [IQBAL HASAN](https://github.com/DevWizardHQ)
-- [All Contributors](https://github.com/DevWizardHQ/laravel-localizer/contributors)
-
-## Support
-
-- [Documentation](https://github.com/DevWizardHQ/laravel-localizer)
-- [Issues](https://github.com/DevWizardHQ/laravel-localizer/issues)
-- [Discussions](https://github.com/DevWizardHQ/laravel-localizer/discussions)
+- [IQBAL HASAN](https://github.com/iqbalhasandev)
+- [All Contributors](../../contributors)
