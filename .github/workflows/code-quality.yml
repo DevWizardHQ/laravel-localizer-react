@@ -50,6 +50,6 @@ jobs:
 
       - name: Commit formatting changes
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
-        uses: stefanzweifel/git-auto-commit-action@v6
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: 'style: fix code formatting [skip ci]'
