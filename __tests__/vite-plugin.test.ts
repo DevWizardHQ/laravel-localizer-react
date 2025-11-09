@@ -1,5 +1,4 @@
 import { laravelLocalizer } from '../vite-plugin';
-import type { Plugin } from 'vite';
 
 describe('laravelLocalizer Vite Plugin', () => {
   it('should return a valid Vite plugin', () => {

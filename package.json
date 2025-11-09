@@ -83,6 +83,7 @@
     "vite": "^5.0.0 || ^6.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
@@ -101,6 +102,7 @@
     "ts-jest": "^29.4.5",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",
+    "typescript-eslint": "^8.46.3",
     "vite": "^6.0.0"
   }
 }

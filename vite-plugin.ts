@@ -32,14 +32,14 @@ export interface LocalizerPluginOptions {
 
 /**
  * Vite plugin for Laravel Localizer
- * 
+ *
  * Automatically regenerates TypeScript translation files when Laravel language files change.
- * 
+ *
  * @example
  * ```ts
  * import { defineConfig } from 'vite';
  * import { laravelLocalizer } from '@devwizard/laravel-localizer-react/vite';
- * 
+ *
  * export default defineConfig({
  *   plugins: [
  *     laravelLocalizer({
@@ -103,7 +103,7 @@ export function laravelLocalizer(options: LocalizerPluginOptions = {}): Plugin {
     }
 
     debounceTimer = setTimeout(() => {
-      generate(reason);
+      void generate(reason);
       debounceTimer = null;
     }, debounce);
   };

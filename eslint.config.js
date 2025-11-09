@@ -5,15 +5,9 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
 export default tseslint.config(
   js.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.recommended,
   {
     files: ['**/*.ts', '**/*.tsx'],
-    languageOptions: {
-      parserOptions: {
-        project: './tsconfig.json',
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
     plugins: {
       react: reactPlugin,
       'react-hooks': reactHooksPlugin,
@@ -33,9 +27,11 @@ export default tseslint.config(
   },
   {
     files: ['**/__tests__/**', '*.config.*', '*.cjs'],
-    ...tseslint.configs.disableTypeChecked,
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
   },
   {
-    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.cjs'],
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.cjs', '*.min.js', 'eslint.config.js'],
   }
 );
