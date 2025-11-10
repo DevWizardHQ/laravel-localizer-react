@@ -2,6 +2,14 @@
 
 All notable changes to `@devwizard/laravel-localizer-react` will be documented in this file.
 
+## v1.0.1 - 2025-11-10
+
+### What's Changed
+
+- fix: bump version to 1.0.1 in package.json
+
+**Full Changelog**: https://github.com/DevWizardHQ/laravel-localizer-vue/compare/v1.0.0...v1.0.1
+
 ## v1.0.0 - 2025-11-09
 
 ### 🎉 Initial Stable Release
@@ -15,17 +23,20 @@ This is the first stable release of Laravel Localizer React, providing seamless 
 A powerful React hook for accessing Laravel translations with full TypeScript support:
 
 - **Translation Functions**
+  
   - `__()` - Main translation function with placeholder replacement and fallback support
   - `trans()` - Alias for `__()` (Laravel compatibility)
   - `lang()` - Alias for `__()` (Laravel compatibility)
   - `has()` - Check if translation key exists
   - `choice()` - Pluralization support with replacement variables
-
+  
 - **Locale Information**
+  
   - `locale` - Current locale code (e.g., 'en', 'fr')
   - `dir` - Text direction ('ltr' or 'rtl')
   - `availableLocales` - Available locales with metadata (label, flag, direction)
   - `translations` - All translations for current locale
+  
 
 #### Placeholder Replacement
 
