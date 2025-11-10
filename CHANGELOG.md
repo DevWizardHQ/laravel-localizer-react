@@ -8,7 +8,7 @@ All notable changes to `@devwizard/laravel-localizer-react` will be documented i
 
 - fix: bump version to 1.0.1 in package.json
 
-**Full Changelog**: https://github.com/DevWizardHQ/laravel-localizer-vue/compare/v1.0.0...v1.0.1
+**Full Changelog**: https://github.com/DevWizardHQ/laravel-localizer-react/compare/v1.0.0...v1.0.1
 
 ## v1.0.0 - 2025-11-09
 
