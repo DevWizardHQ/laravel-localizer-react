@@ -23,20 +23,17 @@ This is the first stable release of Laravel Localizer React, providing seamless 
 A powerful React hook for accessing Laravel translations with full TypeScript support:
 
 - **Translation Functions**
-  
   - `__()` - Main translation function with placeholder replacement and fallback support
   - `trans()` - Alias for `__()` (Laravel compatibility)
   - `lang()` - Alias for `__()` (Laravel compatibility)
   - `has()` - Check if translation key exists
   - `choice()` - Pluralization support with replacement variables
-  
+
 - **Locale Information**
-  
   - `locale` - Current locale code (e.g., 'en', 'fr')
   - `dir` - Text direction ('ltr' or 'rtl')
   - `availableLocales` - Available locales with metadata (label, flag, direction)
   - `translations` - All translations for current locale
-  
 
 #### Placeholder Replacement
 
