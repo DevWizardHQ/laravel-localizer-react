@@ -1,6 +1,6 @@
 {
   "name": "@devwizard/laravel-localizer-react",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "React integration for Laravel Localizer with Vite plugin, useLocalizer hook, and automatic TypeScript generation",
   "main": "dist/index.js",

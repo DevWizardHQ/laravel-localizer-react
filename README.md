@@ -133,6 +133,20 @@ createInertiaApp({
 });
 ```
 
+**TypeScript Declaration**
+
+To ensure type safety when accessing `window.localizer`, add this global declaration to your project:
+
+```typescript
+declare global {
+  interface Window {
+    localizer: {
+      translations: typeof translations;
+    };
+  }
+}
+```
+
 **Alternative: Create a separate file**
 
 **File: `resources/js/lang/index.ts`**
