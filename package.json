@@ -96,7 +96,7 @@
     "@types/react": "^19.1.12",
     "@typescript-eslint/eslint-plugin": "^8.41.0",
     "@typescript-eslint/parser": "^8.41.0",
-    "eslint": "^9.34.0",
+    "eslint": "^10.0.0",
     "eslint-plugin-react": "^7.0.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "jest": "^30.0.0",
