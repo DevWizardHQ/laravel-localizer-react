@@ -13,8 +13,8 @@ on:
       - '.github/workflows/code-quality.yml'
       - 'tsconfig.json'
       - 'package.json'
-  # pull_request:
-  #   branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
 
 permissions:
   contents: write
