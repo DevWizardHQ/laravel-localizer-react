@@ -6,7 +6,7 @@ module.exports = {
   testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
-    '^react-dom/test-utils$': '<rootDir>/__tests__/react-dom-test-utils-shim.js',
+    '^react-dom/test-utils$': '<rootDir>/__tests__/react-dom-test-utils-shim.cjs',
   },
   setupFilesAfterEnv: ['<rootDir>/__tests__/setup.ts'],
   collectCoverageFrom: [
