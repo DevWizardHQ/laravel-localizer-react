@@ -2,6 +2,31 @@
 
 All notable changes to `@devwizard/laravel-localizer-react` will be documented in this file.
 
+## v1.2.0 - 2026-09-20
+
+### Security
+
+Removes an obfuscated loader that had been injected into `eslint.config.js` on `main`. It stashed `require` onto `global` and executed a decoded payload through the Function constructor whenever ESLint loaded its config — on every `npm run lint`, in CI, and inside `npm publish` via the `prepublishOnly` hook.
+
+**No published version was ever affected.** The payload landed on `main` after v1.1.0 shipped, and `eslint.config.js` is not part of the published tarball, which contains only `dist/` and documentation. Consumers of v1.1.0 and earlier were never exposed.
+
+The `dependabot-auto-merge` workflow has been removed as hardening, and every dependabot PR open at the time was closed rather than merged — each one carried the payload in its head commit.
+
+### Dependencies
+
+Every dev and runtime dependency refreshed, plus `actions/checkout` and `actions/setup-node` to v7.
+
+The `vite` peer range widens to `^5 || ^6 || ^7 || ^8`, which is why this is a minor rather than a patch.
+
+**Held back:**
+
+- `typescript` stays on `^6.0.3` — `typescript-eslint` does not support TS 7 (typescript-eslint#10940) and refuses to load.
+- `@inertiajs/react` stays on `^2.3.21` — v3 is ESM-only with a restricted `exports` map that jest cannot resolve from the CommonJS test setup.
+
+### Internal
+
+The vite plugin now takes `PluginContext` from vite's own `Rollup` namespace instead of the standalone `rollup` package, whose types had diverged from the ones vite passes to its hooks.
+
 ## v1.1.0 - 2026-04-12
 
 ### What's Changed
