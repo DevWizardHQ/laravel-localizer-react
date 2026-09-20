@@ -1,9 +1,8 @@
 import { exec } from 'child_process';
 import { minimatch } from 'minimatch';
 import osPath from 'path';
-import { PluginContext } from 'rollup';
 import { promisify } from 'util';
-import { HmrContext, Plugin } from 'vite';
+import { HmrContext, Plugin, Rollup } from 'vite';
 
 const execAsync = promisify(exec);
 
@@ -27,7 +26,7 @@ export interface LocalizerOptions {
   debug?: boolean;
 }
 
-let context: PluginContext;
+let context: Rollup.PluginContext;
 
 /**
  * Vite plugin for Laravel Localizer
