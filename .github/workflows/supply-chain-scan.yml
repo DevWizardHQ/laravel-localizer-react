@@ -1,0 +1,94 @@
+name: Supply Chain Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: PolinRider indicators
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Write indicator list
+        run: |
+          cat > "$RUNNER_TEMP/iocs.txt" <<'IOC'
+          rmcej%otb%
+          Cot%3t=shtP
+          _$_1e42
+          global['!']
+          global['_V']
+          temp_auto_push.bat
+          config.bat
+          TMfKQEd7TJJa5xNZJZ2Lep838vrzrs7mAP
+          TXfxHUet9pJVU1BgVkBAbrES4YUc1nGzcG
+          0xbe037400670fbf1c32364f762975908dc43eeb38759263e7dfcdabc76380811e
+          0x3f0e5781d0855fb460661ac63257376db1941b2bb522499e4757ecb3ebd5dce3
+          api.trongrid.io
+          fullnode.mainnet.aptoslabs.com
+          default-configuration.vercel.app
+          vscode-settings-bootstrap.vercel.app
+          vscode-settings-config.vercel.app
+          vscode-bootstrapper.vercel.app
+          vscode-load-config.vercel.app
+          tailwindcss-style-animate
+          tailwind-mainanimation
+          tailwind-autoanimation
+          tailwindcss-typography-style
+          tailwindcss-style-modify
+          e9b53a7c-2342-4b15-b02d-bd8b8f6a03f9
+          IOC
+          sed -i 's/[[:space:]]*$//' "$RUNNER_TEMP/iocs.txt"
+          echo "$(wc -l < "$RUNNER_TEMP/iocs.txt") indicators loaded"
+
+      - name: Scan files for indicators
+        run: |
+          hits=$(grep -rn -I -F -f "$RUNNER_TEMP/iocs.txt" . \
+            --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor \
+            --exclude=supply-chain-scan.yml || true)
+          if [ -n "$hits" ]; then
+            echo "$hits" | cut -c1-200
+            echo "::error::PolinRider indicator found. See https://github.com/OpenSourceMalware/PolinRider"
+            exit 1
+          fi
+          echo "No indicators found."
+
+      - name: Scan for propagation and payload artifacts
+        run: |
+          artifacts=$(git ls-files \
+            | grep -iE '(^|/)(temp_auto_push|config)\.bat$|\.woff2?$|(^|/)\.vscode/tasks\.json$' \
+            || true)
+          if [ -n "$artifacts" ]; then
+            echo "$artifacts"
+            echo "::error::Artifact associated with the PolinRider campaign is tracked here"
+            exit 1
+          fi
+          echo "No propagation or payload artifacts tracked."
+
+      - name: Check for code appended after config exports
+        run: |
+          configs=$(git ls-files \
+            | grep -E '(^|/)(eslint|vite|tailwind|postcss|next|babel|webpack|vue|astro|gridsome)\.config\.[cm]?[jt]s$' \
+            || true)
+          if [ -z "$configs" ]; then
+            echo "No matching config files."
+            exit 0
+          fi
+          status=0
+          for f in $configs; do
+            longest=$(awk '{ if (length($0) > m) m = length($0) } END { print m+0 }' "$f")
+            echo "$f: longest_line=$longest"
+            if [ "$longest" -gt 2000 ]; then
+              echo "::error file=$f::Line longer than 2000 characters; PolinRider appends its payload as one long line"
+              status=1
+            fi
+          done
+          exit $status
