@@ -104,6 +104,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
+    "lefthook": "2.2.2",
     "prettier": "^3.9.8",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
@@ -112,5 +113,8 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.0",
     "vite": "^8.3.0"
+  },
+  "allowScripts": {
+    "lefthook": true
   }
 }

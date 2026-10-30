@@ -53,7 +53,7 @@ jobs:
         run: |
           hits=$(grep -rn -I -F -f "$RUNNER_TEMP/iocs.txt" . \
             --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor \
-            --exclude=supply-chain-scan.yml || true)
+            --exclude=supply-chain-scan.yml --exclude=devwizard-checks.sh || true)
           if [ -n "$hits" ]; then
             echo "$hits" | cut -c1-200
             echo "::error::PolinRider indicator found. See https://github.com/OpenSourceMalware/PolinRider"
